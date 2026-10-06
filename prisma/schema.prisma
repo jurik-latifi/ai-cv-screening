@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FitCategory {
+  STRONG_MATCH
+  POTENTIAL_MATCH
+  UNMATCHED
+}
+model CvExtractionCache {
+  id            String   @id @default(uuid())
+  cvHash        String   @unique
+  parsedProfile Json
+  createdAt     DateTime @default(now())
+}
+
+model Job {
+  id               String        @id @default(uuid())
+  title            String
+  description      String
+  criteria         Json
+  eliminationRules Json
+  applications     Application[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+}
+
+model Candidate {
+  id            String        @id @default(uuid())
+  name          String
+  email         String?
+  phone         String?
+  linkedin      String?
+  parsedProfile Json
+  applications  Application[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model Application {
+  id          String   @id @default(uuid())
+  filename    String?
+  cvMimeType  String?
+  cvData      Bytes?
+  candidateId String
+  jobId       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  candidate Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  job       Job       @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  evaluation Evaluation?
+
+  @@index([jobId])
+  @@index([candidateId])
+}
+
+model Evaluation {
+  id                    String      @id @default(uuid())
+  applicationId         String      @unique
+  matchScore            Float
+  fitCategory           FitCategory
+  evaluationMatrix      Json
+  eliminationRules      Json
+  aiJustification       String
+  failedEliminationRule Boolean     @default(false)
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([matchScore])
+}
