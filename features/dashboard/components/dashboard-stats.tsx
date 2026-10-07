@@ -1,11 +1,13 @@
 type DashboardStatsProps = {
   totalJobs: number;
   totalCandidates: number;
+  isAiActive: boolean;
 };
 
 export default function DashboardStats({
   totalJobs,
   totalCandidates,
+  isAiActive,
 }: DashboardStatsProps) {
   return (
     <section className="grid gap-4 sm:grid-cols-3">
@@ -65,12 +67,26 @@ export default function DashboardStats({
               CV Screening
             </p>
 
-            <p className="mt-2 text-lg font-semibold text-emerald-600">
-              AI Active
+            <p
+              className={`mt-2 text-lg font-semibold ${
+                isAiActive
+                  ? "text-emerald-600"
+                  : "text-red-600"
+              }`}
+            >
+              {isAiActive
+                ? "AI Active"
+                : "AI Inactive"}
             </p>
           </div>
 
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-lg font-bold text-emerald-600">
+          <div
+            className={`flex h-12 w-12 items-center justify-center rounded-xl text-lg font-bold ${
+              isAiActive
+                ? "bg-emerald-50 text-emerald-600"
+                : "bg-red-50 text-red-600"
+            }`}
+          >
             AI
           </div>
         </div>

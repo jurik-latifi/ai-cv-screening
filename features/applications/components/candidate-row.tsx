@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  useState,
+} from "react";
+
+import {
+  useRouter,
+} from "next/navigation";
+
 import type {
   RankedApplication,
 } from "../services/application.service";
@@ -69,6 +77,14 @@ export default function CandidateRow({
   onToggle,
   criteria,
 }: CandidateRowProps) {
+  const router =
+    useRouter();
+
+  const [
+    isDeleting,
+    setIsDeleting,
+  ] = useState(false);
+
   const evaluation =
     application.evaluation;
 
@@ -116,6 +132,70 @@ export default function CandidateRow({
         evaluation.failedEliminationRule,
     };
 
+  async function handleDelete() {
+    const confirmed =
+      window.confirm(
+        `Are you sure you want to delete ${application.candidate.name}?`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+
+      const response =
+        await fetch(
+          `/api/applications/${application.id}`,
+          {
+            method:
+              "DELETE",
+          }
+        );
+
+      if (!response.ok) {
+        let message =
+          "Could not delete candidate.";
+
+        try {
+          const data =
+            await response.json();
+
+          if (
+            data &&
+            typeof data.error ===
+              "string"
+          ) {
+            message =
+              data.error;
+          }
+        } catch {
+          // Response was not JSON.
+        }
+
+        throw new Error(
+          message
+        );
+      }
+
+      router.refresh();
+    } catch (error) {
+      console.error(
+        "Delete candidate error:",
+        error
+      );
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while deleting the candidate."
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  }
+
   return (
     <article className="overflow-hidden rounded-xl border border-slate-200 bg-white">
 
@@ -124,7 +204,6 @@ export default function CandidateRow({
 
         {/* RANK */}
         <div>
-
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-sm font-bold text-slate-700">
             #{rank}
           </span>
@@ -132,7 +211,6 @@ export default function CandidateRow({
 
         {/* CANDIDATE */}
         <div>
-
           <p className="font-semibold text-slate-900">
             {
               application.candidate
@@ -166,7 +244,6 @@ export default function CandidateRow({
 
         {/* CATEGORY */}
         <div>
-
           <CategoryBadge
             category={
               normalizedEvaluation.fitCategory
@@ -209,13 +286,27 @@ export default function CandidateRow({
               CV unavailable
             </span>
           )}
+
+          <button
+            type="button"
+            onClick={
+              handleDelete
+            }
+            disabled={
+              isDeleting
+            }
+            className="rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isDeleting
+              ? "Deleting..."
+              : "Delete"}
+          </button>
         </div>
       </div>
 
       {/* AI SUMMARY */}
       {isOpen && (
         <div className="border-t border-slate-200 bg-slate-50 p-5">
-
           <AISummary
             candidate={
               candidate

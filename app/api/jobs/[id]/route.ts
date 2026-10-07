@@ -7,6 +7,7 @@ import {
 } from "@/features/jobs/schemas/job.schema";
 
 import {
+  deleteJob,
   getJobById,
 } from "@/features/jobs/services/job.service";
 
@@ -101,6 +102,52 @@ export async function PATCH(
       {
         error:
           message,
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  context: RouteContext
+) {
+  try {
+    const { id } =
+      await context.params;
+
+    const existingJob =
+      await getJobById(id);
+
+    if (!existingJob) {
+      return NextResponse.json(
+        {
+          error: "Job not found.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    await deleteJob(id);
+
+    return NextResponse.json({
+      message:
+        "Job deleted successfully.",
+    });
+  } catch (error) {
+    console.error(
+      "Delete job error:",
+      error
+    );
+
+    return NextResponse.json(
+      {
+        error:
+          "Could not delete job.",
       },
       {
         status: 500,

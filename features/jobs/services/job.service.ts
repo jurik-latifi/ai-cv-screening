@@ -1,27 +1,17 @@
-import {
-  prisma,
-} from "@/lib/db/prisma";
+import { prisma } from "@/lib/db/prisma";
 
-import type {
-  CreateJobInput,
-} from "../schemas/job.schema";
+import type { CreateJobInput } from "../schemas/job.schema";
 
-export async function createJob(
-  data: CreateJobInput
-) {
+export async function createJob(data: CreateJobInput) {
   return prisma.job.create({
     data: {
-      title:
-        data.title,
+      title: data.title,
 
-      description:
-        data.description,
+      description: data.description,
 
-      criteria:
-        data.criteria,
+      criteria: data.criteria,
 
-      eliminationRules:
-        data.eliminationRules,
+      eliminationRules: data.eliminationRules,
     },
   });
 }
@@ -29,27 +19,56 @@ export async function createJob(
 export async function getJobs() {
   return prisma.job.findMany({
     orderBy: {
-      createdAt:
-        "desc",
+      createdAt: "desc",
     },
 
     include: {
       _count: {
         select: {
-          applications:
-            true,
+          applications: true,
         },
       },
     },
   });
 }
 
-export async function getJobById(
-  id: string
-) {
+export async function getJobById(id: string) {
   return prisma.job.findUnique({
     where: {
       id,
     },
+  });
+}
+
+export async function deleteJob(id: string) {
+  const applications = await prisma.application.findMany({
+    where: {
+      jobId: id,
+    },
+    select: {
+      candidateId: true,
+    },
+  });
+
+  const candidateIds = applications.map(
+    (application) => application.candidateId,
+  );
+
+  await prisma.$transaction(async (tx) => {
+    await tx.job.delete({
+      where: {
+        id,
+      },
+    });
+
+    if (candidateIds.length > 0) {
+      await tx.candidate.deleteMany({
+        where: {
+          id: {
+            in: candidateIds,
+          },
+        },
+      });
+    }
   });
 }

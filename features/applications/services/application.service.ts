@@ -147,9 +147,11 @@ export async function saveApplication({
     },
 
     include: {
-      candidate: true,
+      candidate:
+        true,
 
-      evaluation: true,
+      evaluation:
+        true,
     },
   });
 }
@@ -164,21 +166,28 @@ export async function getRankedApplicationsByJobId(
       },
 
       select: {
-        id: true,
+        id:
+          true,
 
-        filename: true,
+        filename:
+          true,
 
-        cvMimeType: true,
+        cvMimeType:
+          true,
 
-        createdAt: true,
+        createdAt:
+          true,
 
         candidate: {
           select: {
-            id: true,
+            id:
+              true,
 
-            name: true,
+            name:
+              true,
 
-            email: true,
+            email:
+              true,
 
             parsedProfile:
               true,
@@ -226,6 +235,17 @@ export async function getApplicationCvById(
 
       cvData:
         true,
+    },
+  });
+}
+
+export async function deleteApplicationById(
+  applicationId: string
+) {
+  return prisma.application.delete({
+    where: {
+      id:
+        applicationId,
     },
   });
 }

@@ -24,6 +24,11 @@ export default async function DashboardPage() {
       0
     );
 
+  const isAiActive =
+    Boolean(
+      process.env.OPENAI_API_KEY
+    );
+
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
       <div className="mx-auto max-w-6xl space-y-8">
@@ -36,6 +41,9 @@ export default async function DashboardPage() {
           }
           totalCandidates={
             totalCandidates
+          }
+          isAiActive={
+            isAiActive
           }
         />
 

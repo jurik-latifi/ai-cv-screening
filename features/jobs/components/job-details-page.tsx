@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { notFound } from "next/navigation";
 
+import DeleteJobButton from "./delete-job-button";
+
 import { getJobById } from "../services/job.service";
 
 import { getRankedApplicationsByJobId } from "@/features/applications/services/application.service";
@@ -12,10 +14,7 @@ import CVUploader from "@/features/cv-processing/components/cv-uploader";
 
 import JobConfiguration from "./job-configuration";
 
-import type {
-  Criterion,
-  EliminationRule,
-} from "../schemas/job.schema";
+import type { Criterion, EliminationRule } from "../schemas/job.schema";
 
 type JobDetailsPageProps = {
   params: Promise<{
@@ -23,34 +22,25 @@ type JobDetailsPageProps = {
   }>;
 };
 
-export default async function JobDetailsPage({
-  params,
-}: JobDetailsPageProps) {
+export default async function JobDetailsPage({ params }: JobDetailsPageProps) {
   const { id } = await params;
 
-  const [job, applications] =
-    await Promise.all([
-      getJobById(id),
-      getRankedApplicationsByJobId(id),
-    ]);
+  const [job, applications] = await Promise.all([
+    getJobById(id),
+    getRankedApplicationsByJobId(id),
+  ]);
 
   if (!job) {
     notFound();
   }
 
-  const criteria =
-    job.criteria as Criterion[];
+  const criteria = job.criteria as Criterion[];
 
-  const eliminationRules =
-    job.eliminationRules as EliminationRule[];
+  const eliminationRules = job.eliminationRules as EliminationRule[];
 
-  const strongMatches =
-    applications.filter(
-      (application) =>
-        application.evaluation
-          ?.fitCategory ===
-        "STRONG_MATCH"
-    ).length;
+  const strongMatches = applications.filter(
+    (application) => application.evaluation?.fitCategory === "STRONG_MATCH",
+  ).length;
 
   return (
     <main className="min-h-screen bg-slate-100 px-6 py-10">
@@ -94,6 +84,8 @@ export default async function JobDetailsPage({
                   Edit Job
                 </Link>
 
+                <DeleteJobButton jobId={job.id} />
+
                 <a
                   href="#upload-cv"
                   className="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-200"
@@ -107,9 +99,7 @@ export default async function JobDetailsPage({
           {/* QUICK STATS */}
           <div className="grid border-t border-slate-200 bg-slate-50/50 sm:grid-cols-3 sm:divide-x sm:divide-slate-200">
             <div className="px-7 py-5">
-              <p className="text-sm font-medium text-slate-500">
-                Candidates
-              </p>
+              <p className="text-sm font-medium text-slate-500">Candidates</p>
 
               <p className="mt-1 text-2xl font-bold text-slate-900">
                 {applications.length}
@@ -139,30 +129,16 @@ export default async function JobDetailsPage({
         </section>
 
         {/* RANKED CANDIDATES */}
-        <RankedCandidates
-          applications={
-            applications
-          }
-          criteria={
-            criteria
-          }
-        />
+        <RankedCandidates applications={applications} criteria={criteria} />
 
         {/* JOB CONFIGURATION */}
         <JobConfiguration
-          criteria={
-            criteria
-          }
-          eliminationRules={
-            eliminationRules
-          }
+          criteria={criteria}
+          eliminationRules={eliminationRules}
         />
 
         {/* CV UPLOAD */}
-        <section
-          id="upload-cv"
-          className="scroll-mt-8"
-        >
+        <section id="upload-cv" className="scroll-mt-8">
           <div className="mb-5">
             <h2 className="text-xl font-semibold text-slate-900">
               Add Candidate
@@ -173,12 +149,7 @@ export default async function JobDetailsPage({
             </p>
           </div>
 
-          <CVUploader
-            jobId={job.id}
-            criteria={
-              criteria
-            }
-          />
+          <CVUploader jobId={job.id} criteria={criteria} />
         </section>
       </div>
     </main>
