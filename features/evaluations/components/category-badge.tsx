@@ -1,3 +1,5 @@
+import Badge from "@/components/ui/badge";
+
 type Category =
   | "Strong Match"
   | "Potential Match"
@@ -10,20 +12,18 @@ type CategoryBadgeProps = {
 export default function CategoryBadge({
   category,
 }: CategoryBadgeProps) {
-  const style =
+  const variant =
     category ===
     "Strong Match"
-      ? "bg-emerald-100 text-emerald-700"
+      ? "success"
       : category ===
-        "Potential Match"
-      ? "bg-amber-100 text-amber-700"
-      : "bg-red-100 text-red-700";
+          "Potential Match"
+        ? "warning"
+        : "danger";
 
   return (
-    <span
-      className={`inline-flex rounded-full px-3 py-1.5 text-xs font-semibold ${style}`}
-    >
+    <Badge variant={variant}>
       {category}
-    </span>
+    </Badge>
   );
 }

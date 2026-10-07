@@ -1,3 +1,9 @@
+import Alert from "@/components/ui/alert";
+
+import SectionCard from "@/components/ui/section-card";
+
+import Tag from "@/components/ui/tag";
+
 import type {
   CandidateProfile,
 } from "@/features/cv-processing/schemas/candidate-profile.schema";
@@ -17,6 +23,10 @@ import ScoreDisplay from "./score-display";
 import EvaluationCriterionCard from "./evaluation-criterion-card";
 
 import MandatoryRuleResult from "./mandatory-rule-result";
+
+import ProfileField from "./profile-field";
+
+import TimelineItem from "./timeline-item";
 
 type AISummaryProps = {
   candidate:
@@ -58,7 +68,7 @@ export default function AISummary({
     <div className="space-y-6">
 
       {/* SUMMARY */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <SectionCard>
 
         <div className="flex flex-wrap items-start justify-between gap-5">
 
@@ -77,6 +87,7 @@ export default function AISummary({
                 evaluation.justification
               }
             </p>
+
           </div>
 
           <div className="text-right">
@@ -95,82 +106,67 @@ export default function AISummary({
                   evaluation.fitCategory
                 }
               />
+
             </div>
+
           </div>
+
         </div>
 
         {evaluation.failedEliminationRule && (
-          <div className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-            Candidate failed at least
-            one mandatory requirement.
-          </div>
+          <Alert
+            variant="danger"
+            className="mt-5"
+          >
+            Candidate failed at least one mandatory requirement.
+          </Alert>
         )}
-      </section>
+
+      </SectionCard>
 
       {/* PROFILE */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <h3 className="text-lg font-semibold text-slate-900">
-          Candidate Profile
-        </h3>
+      <SectionCard
+        title="Candidate Profile"
+      >
 
         <div className="mt-5 grid gap-5 md:grid-cols-2">
 
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Name
-            </p>
+          <ProfileField
+            label="Name"
+            value={
+              candidate.name
+            }
+          />
 
-            <p className="mt-1 text-sm text-slate-700">
-              {candidate.name ||
-                "Not provided"}
-            </p>
-          </div>
+          <ProfileField
+            label="Email"
+            value={
+              candidate.email
+            }
+          />
 
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Email
-            </p>
+          <ProfileField
+            label="Phone"
+            value={
+              candidate.phone
+            }
+          />
 
-            <p className="mt-1 text-sm text-slate-700">
-              {candidate.email ||
-                "Not provided"}
-            </p>
-          </div>
+          <ProfileField
+            label="Location"
+            value={
+              candidate.location
+            }
+          />
 
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Phone
-            </p>
+          <ProfileField
+            label="LinkedIn"
+            value={
+              candidate.linkedin
+            }
+            className="md:col-span-2"
+          />
 
-            <p className="mt-1 text-sm text-slate-700">
-              {candidate.phone ||
-                "Not provided"}
-            </p>
-          </div>
-
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              Location
-            </p>
-
-            <p className="mt-1 text-sm text-slate-700">
-              {candidate.location ||
-                "Not provided"}
-            </p>
-          </div>
-
-          <div className="md:col-span-2">
-
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-              LinkedIn
-            </p>
-
-            <p className="mt-1 break-all text-sm text-slate-700">
-              {candidate.linkedin ||
-                "Not provided"}
-            </p>
-          </div>
         </div>
 
         {candidate.summary && (
@@ -185,22 +181,22 @@ export default function AISummary({
                 candidate.summary
               }
             </p>
+
           </div>
         )}
-      </section>
+
+      </SectionCard>
 
       {/* SKILLS */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+      <SectionCard
+        title="Technical Skills"
+      >
 
-        <h3 className="text-lg font-semibold text-slate-900">
-          Technical Skills
-        </h3>
-
-        {candidate.technicalSkills
+        {candidate
+          .technicalSkills
           .length === 0 ? (
           <p className="mt-3 text-sm text-slate-500">
-            No technical skills
-            detected.
+            No technical skills detected.
           </p>
         ) : (
           <div className="mt-4 flex flex-wrap gap-2">
@@ -210,24 +206,51 @@ export default function AISummary({
                 skill,
                 index
               ) => (
-                <span
+                <Tag
                   key={`${skill}-${index}`}
-                  className="rounded-lg bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-700"
+                  variant="primary"
                 >
                   {skill}
-                </span>
+                </Tag>
               )
             )}
+
           </div>
         )}
-      </section>
+
+      </SectionCard>
+
+      {/* LANGUAGES */}
+      {candidate.languages
+        .length > 0 && (
+        <SectionCard
+          title="Languages"
+        >
+
+          <div className="mt-4 flex flex-wrap gap-2">
+
+            {candidate.languages.map(
+              (
+                language,
+                index
+              ) => (
+                <Tag
+                  key={`${language}-${index}`}
+                >
+                  {language}
+                </Tag>
+              )
+            )}
+
+          </div>
+
+        </SectionCard>
+      )}
 
       {/* EVALUATION */}
-      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-        <h3 className="text-lg font-semibold text-slate-900">
-          Evaluation Criteria
-        </h3>
+      <SectionCard
+        title="Evaluation Criteria"
+      >
 
         <div className="mt-5 grid gap-4 lg:grid-cols-2">
 
@@ -258,17 +281,18 @@ export default function AISummary({
               />
             )
           )}
+
         </div>
-      </section>
+
+      </SectionCard>
 
       {/* MANDATORY RULES */}
-      {evaluation.eliminationRules
+      {evaluation
+        .eliminationRules
         .length > 0 && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-          <h3 className="text-lg font-semibold text-slate-900">
-            Mandatory Requirements
-          </h3>
+        <SectionCard
+          title="Mandatory Requirements"
+        >
 
           <div className="mt-5 space-y-3">
 
@@ -291,18 +315,18 @@ export default function AISummary({
                 />
               )
             )}
+
           </div>
-        </section>
+
+        </SectionCard>
       )}
 
       {/* WORK HISTORY */}
       {candidate.workHistory
         .length > 0 && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-          <h3 className="text-lg font-semibold text-slate-900">
-            Work History
-          </h3>
+        <SectionCard
+          title="Work History"
+        >
 
           <div className="mt-5 space-y-4">
 
@@ -311,55 +335,38 @@ export default function AISummary({
                 work,
                 index
               ) => (
-                <div
+                <TimelineItem
                   key={`${work.company}-${work.jobTitle}-${index}`}
-                  className="rounded-xl border border-slate-200 bg-slate-50 p-4"
-                >
-
-                  <p className="font-semibold text-slate-900">
-                    {
-                      work.jobTitle
-                    }
-                  </p>
-
-                  <p className="mt-1 text-sm font-medium text-slate-600">
-                    {
-                      work.company
-                    }
-                  </p>
-
-                  <p className="mt-1 text-xs text-slate-400">
-                    {
-                      work.startDate
-                    }{" "}
-                    —{" "}
-                    {
-                      work.endDate
-                    }
-                  </p>
-
-                  {work.description && (
-                    <p className="mt-3 text-sm leading-6 text-slate-600">
-                      {
-                        work.description
-                      }
-                    </p>
-                  )}
-                </div>
+                  title={
+                    work.jobTitle
+                  }
+                  subtitle={
+                    work.company
+                  }
+                  startDate={
+                    work.startDate
+                  }
+                  endDate={
+                    work.endDate
+                  }
+                  description={
+                    work.description
+                  }
+                />
               )
             )}
+
           </div>
-        </section>
+
+        </SectionCard>
       )}
 
       {/* EDUCATION */}
       {candidate.education
         .length > 0 && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-          <h3 className="text-lg font-semibold text-slate-900">
-            Education
-          </h3>
+        <SectionCard
+          title="Education"
+        >
 
           <div className="mt-5 space-y-4">
 
@@ -368,55 +375,39 @@ export default function AISummary({
                 education,
                 index
               ) => (
-                <div
+                <TimelineItem
                   key={`${education.institution}-${education.degree}-${index}`}
-                  className="rounded-xl border border-slate-200 bg-slate-50 p-4"
-                >
-
-                  <p className="font-semibold text-slate-900">
-                    {
-                      education.degree
-                    }
-                  </p>
-
-                  <p className="mt-1 text-sm text-slate-600">
-                    {
-                      education.institution
-                    }
-                  </p>
-
-                  {education.fieldOfStudy && (
-                    <p className="mt-1 text-sm text-slate-500">
-                      {
-                        education.fieldOfStudy
-                      }
-                    </p>
-                  )}
-
-                  <p className="mt-2 text-xs text-slate-400">
-                    {
-                      education.startDate
-                    }{" "}
-                    —{" "}
-                    {
-                      education.endDate
-                    }
-                  </p>
-                </div>
+                  title={
+                    education.degree
+                  }
+                  subtitle={
+                    education.institution
+                  }
+                  secondaryText={
+                    education.fieldOfStudy
+                  }
+                  startDate={
+                    education.startDate
+                  }
+                  endDate={
+                    education.endDate
+                  }
+                />
               )
             )}
+
           </div>
-        </section>
+
+        </SectionCard>
       )}
 
       {/* CERTIFICATIONS */}
-      {candidate.certifications
+      {candidate
+        .certifications
         .length > 0 && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-
-          <h3 className="text-lg font-semibold text-slate-900">
-            Certifications
-          </h3>
+        <SectionCard
+          title="Certifications"
+        >
 
           <div className="mt-4 flex flex-wrap gap-2">
 
@@ -425,19 +416,21 @@ export default function AISummary({
                 certification,
                 index
               ) => (
-                <span
+                <Tag
                   key={`${certification}-${index}`}
-                  className="rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-700"
                 >
                   {
                     certification
                   }
-                </span>
+                </Tag>
               )
             )}
+
           </div>
-        </section>
+
+        </SectionCard>
       )}
+
     </div>
   );
 }

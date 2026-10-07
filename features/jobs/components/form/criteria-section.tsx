@@ -1,12 +1,24 @@
+import Card from "@/components/ui/card";
+
+import FormField from "@/components/ui/form-field";
+
+import Input from "@/components/ui/input";
+
+import Textarea from "@/components/ui/text-area";
+
 import type {
   Criterion,
 } from "../../schemas/job.schema";
 
 type CriteriaSectionProps = {
-  criteria: Criterion[];
-  totalWeight: number;
+  criteria:
+    Criterion[];
 
-  onAdd: () => void;
+  totalWeight:
+    number;
+
+  onAdd:
+    () => void;
 
   onChange: (
     index: number,
@@ -53,7 +65,9 @@ function CriterionRow({
 }: CriterionRowProps) {
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
+
       <div className="mb-4 flex items-center justify-between gap-4">
+
         <p className="font-semibold text-slate-900">
           Criterion{" "}
           {index + 1}
@@ -72,15 +86,15 @@ function CriterionRow({
             Remove
           </button>
         )}
+
       </div>
 
       <div className="grid gap-4 md:grid-cols-[1fr_120px]">
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Name
-          </label>
 
-          <input
+        <FormField
+          label="Name"
+        >
+          <Input
             type="text"
             value={
               criterion.name
@@ -96,16 +110,13 @@ function CriterionRow({
               )
             }
             placeholder="e.g. Technical Skills"
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
-        </div>
+        </FormField>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Weight %
-          </label>
-
-          <input
+        <FormField
+          label="Weight %"
+        >
+          <Input
             type="number"
             min={1}
             max={100}
@@ -122,7 +133,6 @@ function CriterionRow({
               onChange(
                 index,
                 "weight",
-
                 event.target
                   .value ===
                   ""
@@ -135,17 +145,16 @@ function CriterionRow({
               )
             }
             placeholder="e.g. 50"
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
-        </div>
+        </FormField>
+
       </div>
 
-      <div className="mt-4">
-        <label className="mb-2 block text-sm font-medium text-slate-700">
-          Description
-        </label>
-
-        <textarea
+      <FormField
+        label="Description"
+        className="mt-4"
+      >
+        <Textarea
           rows={3}
           value={
             criterion.description
@@ -161,9 +170,9 @@ function CriterionRow({
             )
           }
           placeholder="e.g. Relevant technical skills required for the role."
-          className="w-full resize-none rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
         />
-      </div>
+      </FormField>
+
     </div>
   );
 }
@@ -176,29 +185,27 @@ export default function CriteriaSection({
   onRemove,
 }: CriteriaSectionProps) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <Card className="p-6">
+
       <div>
         <h2 className="text-xl font-semibold text-slate-900">
           Evaluation Criteria
         </h2>
 
         <p className="mt-1 text-sm text-slate-500">
-          Configure the
-          weighted requirements
-          used for scoring.
+          Configure the weighted requirements used for scoring.
         </p>
       </div>
 
       <div className="my-5 flex items-center justify-between rounded-xl bg-slate-50 p-4">
+
         <div>
           <span className="text-sm font-medium text-slate-600">
             Total Weight
           </span>
 
           <p className="mt-1 text-xs text-slate-500">
-            Every criterion
-            must have a weight
-            greater than 0%.
+            Every criterion must have a weight greater than 0%.
           </p>
         </div>
 
@@ -215,9 +222,11 @@ export default function CriteriaSection({
         >
           {totalWeight}%
         </span>
+
       </div>
 
       <div className="space-y-4">
+
         {criteria.map(
           (
             criterion,
@@ -246,9 +255,11 @@ export default function CriteriaSection({
             />
           )
         )}
+
       </div>
 
       <div className="mt-6">
+
         <button
           type="button"
           onClick={
@@ -258,7 +269,9 @@ export default function CriteriaSection({
         >
           + Add Criterion
         </button>
+
       </div>
-    </section>
+
+    </Card>
   );
 }

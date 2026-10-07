@@ -1,8 +1,21 @@
+import Card from "@/components/ui/card";
+
+import FormField from "@/components/ui/form-field";
+
+import Input from "@/components/ui/input";
+
+import Textarea from "@/components/ui/text-area";
+
 type JobDetailsSectionProps = {
   title: string;
+
   description: string;
-  onTitleChange: (value: string) => void;
-  onDescriptionChange: (value: string) => void;
+
+  onTitleChange:
+    (value: string) => void;
+
+  onDescriptionChange:
+    (value: string) => void;
 };
 
 export default function JobDetailsSection({
@@ -12,7 +25,8 @@ export default function JobDetailsSection({
   onDescriptionChange,
 }: JobDetailsSectionProps) {
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <Card className="p-6">
+
       <div>
         <h2 className="text-xl font-semibold text-slate-900">
           Job Details
@@ -24,38 +38,49 @@ export default function JobDetailsSection({
       </div>
 
       <div className="mt-6 space-y-5">
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Job Title
-          </label>
 
-          <input
+        <FormField
+          label="Job Title"
+        >
+          <Input
             type="text"
-            value={title}
-            onChange={(event) =>
-              onTitleChange(event.target.value)
+            value={
+              title
+            }
+            onChange={(
+              event
+            ) =>
+              onTitleChange(
+                event.target
+                  .value
+              )
             }
             placeholder="e.g. Full-Stack React Developer"
-            className="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
-        </div>
+        </FormField>
 
-        <div>
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Job Description
-          </label>
-
-          <textarea
+        <FormField
+          label="Job Description"
+        >
+          <Textarea
             rows={5}
-            value={description}
-            onChange={(event) =>
-              onDescriptionChange(event.target.value)
+            value={
+              description
+            }
+            onChange={(
+              event
+            ) =>
+              onDescriptionChange(
+                event.target
+                  .value
+              )
             }
             placeholder="e.g. Build and maintain modern web applications using React and Next.js."
-            className="w-full resize-none rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
           />
-        </div>
+        </FormField>
+
       </div>
-    </section>
+
+    </Card>
   );
 }

@@ -1,35 +1,30 @@
-import Link from "next/link";
+import BackLink from "@/components/ui/back-link";
+
+import PageHeader from "@/components/ui/page-header";
+
+import PageShell from "@/components/ui/page-shell";
 
 import JobForm from "./job-form";
 
 export default function CreateJobPage() {
   return (
-    <main className="min-h-screen bg-slate-100 px-6 py-10">
-      <div className="mx-auto max-w-5xl">
-        <Link
-          href="/"
-          className="mb-6 inline-flex text-sm font-semibold text-slate-500 transition hover:text-indigo-600"
-        >
-          ← Back to Dashboard
-        </Link>
+    <PageShell maxWidth="5xl">
 
-        <div className="mb-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">
-            Job Setup
-          </p>
+      <BackLink
+        href="/"
+        className="mb-6"
+      >
+        Back to Dashboard
+      </BackLink>
 
-          <h1 className="mt-2 text-3xl font-bold text-slate-900">
-            Create New Job
-          </h1>
+      <PageHeader
+        eyebrow="Job Setup"
+        title="Create New Job"
+        description="Configure the job, evaluation criteria and mandatory requirements used by the AI screening system."
+      />
 
-          <p className="mt-2 max-w-2xl text-slate-500">
-            Configure the job, evaluation criteria and mandatory
-            requirements used by the AI screening system.
-          </p>
-        </div>
+      <JobForm />
 
-        <JobForm />
-      </div>
-    </main>
+    </PageShell>
   );
 }

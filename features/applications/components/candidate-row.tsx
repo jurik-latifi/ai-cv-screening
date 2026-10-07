@@ -8,6 +8,8 @@ import {
   useRouter,
 } from "next/navigation";
 
+import Button from "@/components/ui/button";
+
 import type {
   RankedApplication,
 } from "../services/application.service";
@@ -260,24 +262,25 @@ export default function CandidateRow({
         {/* ACTIONS */}
         <div className="flex flex-wrap gap-2 md:justify-end">
 
-          <button
+          <Button
             type="button"
+            variant="soft"
+            size="sm"
             onClick={
               onToggle
             }
-            className="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100"
           >
             {isOpen
               ? "Hide AI Summary"
               : "View AI Summary"}
-          </button>
+          </Button>
 
           {application.cvMimeType ? (
             <a
               href={`/api/applications/${application.id}/cv`}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
             >
               View CV ↗
             </a>
@@ -287,26 +290,29 @@ export default function CandidateRow({
             </span>
           )}
 
-          <button
+          <Button
             type="button"
+            variant="danger"
+            size="sm"
             onClick={
               handleDelete
             }
             disabled={
               isDeleting
             }
-            className="rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isDeleting
               ? "Deleting..."
               : "Delete"}
-          </button>
+          </Button>
+
         </div>
       </div>
 
       {/* AI SUMMARY */}
       {isOpen && (
         <div className="border-t border-slate-200 bg-slate-50 p-5">
+
           <AISummary
             candidate={
               candidate
@@ -318,6 +324,7 @@ export default function CandidateRow({
               criteria
             }
           />
+
         </div>
       )}
     </article>

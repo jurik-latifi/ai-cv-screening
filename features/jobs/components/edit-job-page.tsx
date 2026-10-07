@@ -1,5 +1,12 @@
-import Link from "next/link";
-import { notFound } from "next/navigation";
+import {
+  notFound,
+} from "next/navigation";
+
+import BackLink from "@/components/ui/back-link";
+
+import PageHeader from "@/components/ui/page-header";
+
+import PageShell from "@/components/ui/page-shell";
 
 import {
   getJobById,
@@ -28,9 +35,14 @@ export default async function EditJobPage({
   const { id } =
     await params;
 
-  const [job, applications] =
+  const [
+    job,
+    applications,
+  ] =
     await Promise.all([
-      getJobById(id),
+      getJobById(
+        id
+      ),
 
       getRankedApplicationsByJobId(
         id
@@ -48,51 +60,43 @@ export default async function EditJobPage({
     job.eliminationRules as EliminationRule[];
 
   return (
-    <main className="min-h-screen bg-slate-100 px-6 py-10">
-      <div className="mx-auto max-w-5xl">
-        <Link
-          href={`/jobs/${job.id}`}
-          className="mb-6 inline-flex text-sm font-semibold text-slate-500 transition hover:text-indigo-600"
-        >
-          ← Back to Job
-        </Link>
+    <PageShell maxWidth="5xl">
 
-        <div className="mb-8">
-          <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">
-            Job Setup
-          </p>
+      <BackLink
+        href={`/jobs/${job.id}`}
+        className="mb-6"
+      >
+        Back to Job
+      </BackLink>
 
-          <h1 className="mt-2 text-3xl font-bold text-slate-900">
-            Edit Job
-          </h1>
+      <PageHeader
+        eyebrow="Job Setup"
+        title="Edit Job"
+        description="Update the job details, evaluation criteria and mandatory requirements."
+      />
 
-          <p className="mt-2 max-w-2xl text-slate-500">
-            Update the job details,
-            evaluation criteria and
-            mandatory requirements.
-          </p>
-        </div>
+      <JobForm
+        mode="edit"
+        jobId={
+          job.id
+        }
+        initialTitle={
+          job.title
+        }
+        initialDescription={
+          job.description
+        }
+        initialCriteria={
+          criteria
+        }
+        initialEliminationRules={
+          eliminationRules
+        }
+        candidateCount={
+          applications.length
+        }
+      />
 
-        <JobForm
-          mode="edit"
-          jobId={job.id}
-          initialTitle={
-            job.title
-          }
-          initialDescription={
-            job.description
-          }
-          initialCriteria={
-            criteria
-          }
-          initialEliminationRules={
-            eliminationRules
-          }
-          candidateCount={
-            applications.length
-          }
-        />
-      </div>
-    </main>
+    </PageShell>
   );
 }

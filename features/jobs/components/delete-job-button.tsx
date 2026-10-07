@@ -8,6 +8,8 @@ import {
   useRouter,
 } from "next/navigation";
 
+import Button from "@/components/ui/button";
+
 type DeleteJobButtonProps = {
   jobId: string;
 };
@@ -52,9 +54,12 @@ export default function DeleteJobButton({
       }
 
       router.push("/");
+
       router.refresh();
     } catch (error) {
-      console.error(error);
+      console.error(
+        error
+      );
 
       alert(
         "Something went wrong while deleting the job."
@@ -65,19 +70,21 @@ export default function DeleteJobButton({
   }
 
   return (
-    <button
+    <Button
       type="button"
+      variant="danger"
+      size="lg"
       onClick={
         handleDelete
       }
       disabled={
         isDeleting
       }
-      className="inline-flex items-center justify-center rounded-xl border border-red-200 bg-white px-5 py-3 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+      className="shadow-sm"
     >
       {isDeleting
         ? "Deleting..."
         : "Delete Job"}
-    </button>
+    </Button>
   );
 }

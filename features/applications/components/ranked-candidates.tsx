@@ -4,6 +4,12 @@ import {
   useState,
 } from "react";
 
+import Badge from "@/components/ui/badge";
+
+import Card from "@/components/ui/card";
+
+import EmptyState from "@/components/ui/empty-state";
+
 import type {
   RankedApplication,
 } from "../services/application.service";
@@ -46,45 +52,36 @@ export default function RankedCandidates({
   }
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+    <Card className="p-6">
 
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
 
         <div>
-
           <h2 className="text-xl font-semibold text-slate-900">
             Ranked Candidates
           </h2>
 
           <p className="mt-1 text-sm text-slate-500">
-            Candidates are ranked by
-            their match score.
+            Candidates are ranked by their match score.
           </p>
         </div>
 
-        <span className="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-600">
+        <Badge variant="neutral">
           {applications.length}{" "}
           {applications.length ===
           1
             ? "candidate"
             : "candidates"}
-        </span>
+        </Badge>
+
       </div>
 
       {applications.length ===
       0 ? (
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
-
-          <p className="font-medium text-slate-700">
-            No candidates yet
-          </p>
-
-          <p className="mt-1 text-sm text-slate-500">
-            Upload a CV below to
-            evaluate the first
-            candidate.
-          </p>
-        </div>
+        <EmptyState
+          title="No candidates yet"
+          description="Upload a CV below to evaluate the first candidate."
+        />
       ) : (
         <div className="space-y-3">
 
@@ -118,8 +115,10 @@ export default function RankedCandidates({
               />
             )
           )}
+
         </div>
       )}
-    </section>
+
+    </Card>
   );
 }

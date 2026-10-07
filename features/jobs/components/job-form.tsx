@@ -1,7 +1,10 @@
 "use client";
 
-import {
+import type {
   FormEvent,
+} from "react";
+
+import {
   useState,
 } from "react";
 
@@ -9,34 +12,56 @@ import {
   useRouter,
 } from "next/navigation";
 
+import Alert from "@/components/ui/alert";
+
 import type {
   Criterion,
   EliminationRule,
 } from "../schemas/job.schema";
 
+import {
+  validateJobForm,
+} from "../utils/validate-job-form";
+
 import JobDetailsSection from "./form/job-details-section";
+
 import CriteriaSection from "./form/criteria-section";
+
 import MandatoryRulesSection from "./form/mandatory-rules-section";
+
+import ReEvaluationStatus from "./form/re-evaluation-status";
+
+import JobFormActions from "./form/job-form-actions";
 
 type JobFormProps = {
   mode?: "create" | "edit";
+
   jobId?: string;
 
   initialTitle?: string;
+
   initialDescription?: string;
 
-  initialCriteria?: Criterion[];
+  initialCriteria?:
+    Criterion[];
 
-  initialEliminationRules?: EliminationRule[];
+  initialEliminationRules?:
+    EliminationRule[];
 
   candidateCount?: number;
 };
 
-const EMPTY_CRITERION: Criterion = {
-  name: "",
-  description: "",
-  weight: 0,
-};
+const EMPTY_CRITERION:
+  Criterion = {
+    name:
+      "",
+
+    description:
+      "",
+
+    weight:
+      0,
+  };
 
 export default function JobForm({
   mode = "create",
@@ -73,7 +98,9 @@ export default function JobForm({
     criteria,
     setCriteria,
   ] =
-    useState<Criterion[]>(
+    useState<
+      Criterion[]
+    >(
       initialCriteria?.length
         ? initialCriteria
         : [
@@ -138,8 +165,10 @@ export default function JobForm({
 
   function updateCriterion(
     index: number,
+
     field:
       keyof Criterion,
+
     value:
       string | number
   ) {
@@ -154,6 +183,7 @@ export default function JobForm({
             index
               ? {
                   ...criterion,
+
                   [field]:
                     value,
                 }
@@ -184,8 +214,11 @@ export default function JobForm({
         ...current,
 
         {
-          name: "",
-          description: "",
+          name:
+            "",
+
+          description:
+            "",
         },
       ]
     );
@@ -193,8 +226,10 @@ export default function JobForm({
 
   function updateEliminationRule(
     index: number,
+
     field:
       keyof EliminationRule,
+
     value: string
   ) {
     setEliminationRules(
@@ -208,6 +243,7 @@ export default function JobForm({
             index
               ? {
                   ...rule,
+
                   [field]:
                     value,
                 }
@@ -232,66 +268,6 @@ export default function JobForm({
     );
   }
 
-  function validateForm() {
-    if (
-      !title.trim()
-    ) {
-      return "Job title is required.";
-    }
-
-    if (
-      !description.trim()
-    ) {
-      return "Job description is required.";
-    }
-
-    if (
-      criteria.length ===
-      0
-    ) {
-      return "At least one criterion is required.";
-    }
-
-    const incompleteCriterion =
-      criteria.some(
-        (
-          criterion
-        ) =>
-          !criterion.name.trim() ||
-          !criterion.description.trim()
-      );
-
-    if (
-      incompleteCriterion
-    ) {
-      return "Every criterion must have a name and description.";
-    }
-
-    if (
-      totalWeight !==
-      100
-    ) {
-      return "Criteria weights must total exactly 100%.";
-    }
-
-    const incompleteRule =
-      eliminationRules.some(
-        (
-          rule
-        ) =>
-          !rule.name.trim() ||
-          !rule.description.trim()
-      );
-
-    if (
-      incompleteRule
-    ) {
-      return "Every mandatory requirement must have a name and description.";
-    }
-
-    return null;
-  }
-
   async function handleSubmit(
     event:
       FormEvent<HTMLFormElement>
@@ -301,7 +277,13 @@ export default function JobForm({
     setError("");
 
     const validationError =
-      validateForm();
+      validateJobForm({
+        title,
+        description,
+        criteria,
+        eliminationRules,
+        totalWeight,
+      });
 
     if (
       validationError
@@ -333,19 +315,20 @@ export default function JobForm({
     try {
       setLoading(true);
 
-      /*
-       * Show progress mainly for
-       * re-evaluation because it can
-       * take longer than job creation.
-       */
-      if (isEdit) {
-        setProgress(5);
+      if (
+        isEdit
+      ) {
+        setProgress(
+          5
+        );
 
         progressInterval =
           setInterval(
             () => {
               setProgress(
-                (current) => {
+                (
+                  current
+                ) => {
                   if (
                     current <
                     50
@@ -441,16 +424,17 @@ export default function JobForm({
         );
       }
 
-      if (isEdit) {
-        setProgress(100);
+      if (
+        isEdit
+      ) {
+        setProgress(
+          100
+        );
 
-        /*
-         * Small delay so the user can
-         * visually see 100% before
-         * redirecting.
-         */
         await new Promise(
-          (resolve) =>
+          (
+            resolve
+          ) =>
             setTimeout(
               resolve,
               500
@@ -474,7 +458,9 @@ export default function JobForm({
         );
       }
 
-      setProgress(0);
+      setProgress(
+        0
+      );
 
       setError(
         error instanceof
@@ -483,7 +469,9 @@ export default function JobForm({
           : "Something went wrong."
       );
     } finally {
-      setLoading(false);
+      setLoading(
+        false
+      );
     }
   }
 
@@ -494,8 +482,11 @@ export default function JobForm({
       }
       className="space-y-8"
     >
+
       <JobDetailsSection
-        title={title}
+        title={
+          title
+        }
         description={
           description
         }
@@ -540,94 +531,43 @@ export default function JobForm({
         }
       />
 
-      {isEdit &&
-        candidateCount >
-          0 && (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
-            <p className="font-semibold text-amber-800">
-              Existing candidates will be re-evaluated
-            </p>
-
-            <p className="mt-1 text-sm leading-6 text-amber-700">
-              This job has{" "}
-              {
-                candidateCount
-              }{" "}
-              existing{" "}
-              {candidateCount ===
-              1
-                ? "candidate"
-                : "candidates"}
-              . Saving changes
-              will evaluate them
-              again using the
-              updated job
-              configuration.
-            </p>
-          </div>
-        )}
-
-      {/* RE-EVALUATION PROGRESS */}
-      {isEdit &&
-        loading && (
-          <div className="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-5">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p className="text-sm font-semibold text-indigo-900">
-                  Re-evaluating candidates
-                </p>
-
-                <p className="mt-1 text-xs text-indigo-600">
-                  Updating scores and rankings with the new job criteria.
-                </p>
-              </div>
-
-              <span className="text-sm font-bold text-indigo-700">
-                {progress}%
-              </span>
-            </div>
-
-            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-indigo-100">
-              <div
-                className="h-full rounded-full bg-indigo-600 transition-all duration-500"
-                style={{
-                  width: `${progress}%`,
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-      {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
-          {error}
-        </div>
+      {isEdit && (
+        <ReEvaluationStatus
+          candidateCount={
+            candidateCount
+          }
+          loading={
+            loading
+          }
+          progress={
+            progress
+          }
+        />
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <p className="text-sm text-slate-500">
-          Criteria weights must
-          total 100%.
-        </p>
-
-        <button
-          type="submit"
-          disabled={
-            loading ||
-            totalWeight !==
-              100
-          }
-          className="rounded-xl bg-indigo-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+      {error && (
+        <Alert
+          variant="danger"
         >
-          {loading
-            ? isEdit
-              ? `Re-evaluating... ${progress}%`
-              : "Creating Job..."
-            : isEdit
-              ? "Save Changes & Re-evaluate"
-              : "Create Job"}
-        </button>
-      </div>
+          {error}
+        </Alert>
+      )}
+
+      <JobFormActions
+        loading={
+          loading
+        }
+        isEdit={
+          isEdit
+        }
+        progress={
+          progress
+        }
+        totalWeight={
+          totalWeight
+        }
+      />
+
     </form>
   );
 }
